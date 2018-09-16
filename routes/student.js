@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const mysql = require('../mysql');
 const checkAuth = require('../check-auth');
-
 const upload = require('../upload');
+const checkPayments = require('../check-payments');
 
 router.get('/', (req, res, next) => {
 
@@ -18,7 +17,7 @@ router.get('/', (req, res, next) => {
         });
     });
 
-});
+},checkPayments);
 
 router.get('/:studentId', (req, res, next) => {
 

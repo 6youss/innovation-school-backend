@@ -48,6 +48,7 @@ CREATE TABLE payment (
     paymentPrice integer,
     paymentDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     paymentDone integer DEFAULT 0,
+    paymentDoneDate DATETIME,
     FOREIGN KEY (studentId) REFERENCES student(studentId),
     FOREIGN KEY (groupId) REFERENCES groupe(groupId)
 );
@@ -57,6 +58,7 @@ CREATE TABLE payment_info (
     groupId integer,
     sessionCount integer DEFAULT 1,
     paymentPrice integer,
+    inscriptionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (studentId, groupId),
     FOREIGN KEY (groupId) REFERENCES groupe(groupId),
     FOREIGN KEY (studentId) REFERENCES student(studentId)
@@ -160,7 +162,8 @@ SELECT  pi.studentId,
         pi.groupId,
         pi.sessionCount,
         pi.paymentPrice,
-        count(s.sessionId) as sessionsDoneCount
+        count(s.sessionId) as sessionsDoneCount,
+        DATE(pi.inscriptionDate) as inscriptionDate
 FROM
 student as p JOIN payment_info as pi ON p.studentId=pi.studentId
 JOIN session as s ON pi.groupId=s.groupId
@@ -172,7 +175,9 @@ CREATE VIEW session_paid AS
 SELECT p.studentId,
        p.groupId,
        SUM(p.paymentPrice) as totalPaid,
-       SUM(p.paymentPrice) DIV pi.paymentPrice as sessionsPaidCount
+       SUM(p.paymentPrice) DIV pi.paymentPrice as sessionsPaidCount,
+       MAX(DATE(p.paymentDate)) as paymentDate,
+       DATEDIFF(CURRENT_TIMESTAMP,MAX(p.paymentDate))
 FROM
 payment as p JOIN payment_info as pi ON p.studentId = pi.studentId
 GROUP BY p.studentId;

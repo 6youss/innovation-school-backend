@@ -3,6 +3,7 @@ const router = express.Router();
 
 const mysql = require('../mysql');
 const checkAuth = require('../check-auth');
+const checkPayments = require('../check-payments');
 
 router.get('/', (req, res, next) => {
     
@@ -140,7 +141,7 @@ router.put('/', (req, res, next) => {
         next();
     });
 
-});
+},checkPayments);
 
 router.delete('/:sessionId', (req, res, next) => {
 

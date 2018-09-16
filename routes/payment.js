@@ -3,11 +3,11 @@ const router = express.Router();
 
 const mysql = require('../mysql');
 const checkAuth = require('../check-auth');
+const checkPayments = require('../check-payments');
 
 
 
-
-router.get('/', (req, res, next) => {
+router.get('/', checkPayments,(req, res, next) => {
 
     const sql = "SELECT * FROM payment ;";
 
@@ -50,7 +50,7 @@ router.post('/' , (req, res, next) => {
     const sql = "INSERT INTO payment (studentId,groupId,paymentPrice,paymentDate,paymentDone) VALUES ('" +
         payment.studentId + "','" +
         payment.groupId + "','" +
-        payment.paymentPrice + "'," +
+        payment.paymentPrice + "'," + 
         payment.paymentDate + ",'" +
         payment.paymentDone + "'"
         +");";
