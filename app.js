@@ -10,8 +10,10 @@ const groupRoutes = require('./routes/group');
 const paymentRoutes = require('./routes/payment');
 const sessionRoutes = require('./routes/session');
 const roomRoutes = require('./routes/room');
+const billRoutes = require('./routes/bill');
 
 const checkPayments = require('./check-payments');
+
 
 app.use(bodyParser.urlencoded({
     extended: false
@@ -39,8 +41,10 @@ app.use('/module', moduleRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/session', sessionRoutes);
 app.use('/room', roomRoutes);
+app.use('/bill', billRoutes);
 
 app.use('/uploads', express.static('uploads'));
+app.use('/bills', express.static('bills'));
 app.use('/checkpayments', checkPayments);
 
 app.use((req, res, next) => {

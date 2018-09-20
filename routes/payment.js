@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const pdf = require('pdfkit');
+const fs = require('fs');
 const mysql = require('../mysql');
 const checkAuth = require('../check-auth');
 const checkPayments = require('../check-payments');
@@ -28,15 +29,28 @@ router.get('/:paymentId', (req, res, next) => {
     const sql = "SELECT * FROM payment WHERE paymentId='" + paymentId + "';";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log(result);
-        res.status(200).json({
-            message: "selected a payment",
-            payment: result
-        });
+        if (err) next();
+        else{
+            const pdfPath = createPdf(result)
+            res.status(200).json({
+                message: "selected a payment",
+                payment: {...result,pdfPath}
+            });
+        }
+        
     });
 
 });
+
+function createPdf({ paymentId,studentId,groupId,paymentPrice,paymentDate,paymentDone,paymentDoneDate}){
+    const myDoc = new pdf;
+    myDoc.pipe(fs.createWriteStream('./bills/bill.pdf'));
+    myDoc.font('Times-Roman')
+        .fontSize(48)
+        .text('hahaha',300,100);
+    myDoc.end();
+    return "";
+}
 
 router.post('/' , (req, res, next) => {
 

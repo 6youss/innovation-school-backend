@@ -124,6 +124,23 @@ CREATE TABLE user (
     password varchar(500)
 );
 
+CREATE TABLE bill(
+    billId integer PRIMARY KEY AUTO_INCREMENT,
+    studentId integer,
+    totalPrice integer,
+    billDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (studentId) REFERENCES student(studentId)
+);
+
+CREATE TABLE pay (
+    billId integer,
+    paymentId integer,
+    PRIMARY KEY (billId, paymentId),
+    FOREIGN KEY (billId) REFERENCES bill(billId),
+    FOREIGN KEY (paymentId) REFERENCES payment(paymentId)
+);
+
+
 //trigger when deleting a groupe,student
 
 ALTER TABLE student MODIFY picture VARCHAR(500);
@@ -177,7 +194,7 @@ SELECT p.studentId,
        SUM(p.paymentPrice) as totalPaid,
        SUM(p.paymentPrice) DIV pi.paymentPrice as sessionsPaidCount,
        MAX(DATE(p.paymentDate)) as paymentDate,
-       DATEDIFF(CURRENT_TIMESTAMP,MAX(p.paymentDate))
+       DATEDIFF(CURRENT_TIMESTAMP,MAX(p.paymentDate)) as dayDiff
 FROM
 payment as p JOIN payment_info as pi ON p.studentId = pi.studentId
 GROUP BY p.studentId;
@@ -211,3 +228,21 @@ truncate payment;
 
 select * from session;
 delete from session where sessionId='';
+
+
+select *
+FROM
+session as se JOIN study st ON se.groupId=st.groupId
+WHERE studentId='1';
+
+SELECT *
+FROM  session 
+WHERE groupId = (SELECT groupId 
+                     FROM study 
+                     WHERE studentId ='1');
+
+SELECT *
+FROM  groupe 
+WHERE groupId = (SELECT groupId 
+                     FROM study 
+                     WHERE studentId ='1');

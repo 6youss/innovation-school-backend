@@ -19,18 +19,87 @@ router.get('/', (req, res, next) => {
 
 },checkPayments);
 
+
 router.get('/:studentId', (req, res, next) => {
 
     const studentId = req.params.studentId;
 
     const sql = "SELECT * FROM student WHERE studentId='" + studentId + "';";
+    
+    mysql.query(sql, function (err, result) {
+        if (err) next();
+        else
+        res.status(200).json({
+            message: "selected a student",
+            student: result
+        });
+    });
+
+});
+
+router.get('/:studentId/payments', (req, res, next) => {
+
+    const studentId = req.params.studentId;
+
+    const sql =`SELECT paymentId,
+                    studentId,
+                    groupId,
+                    paymentPrice,
+                    DATE_FORMAT(paymentDate,'%Y/%m/%d') as paymentDate,
+                    paymentDone,
+                    paymentDoneDate 
+                FROM payment 
+                WHERE studentId='${studentId}';`;
 
     mysql.query(sql, function (err, result) {
         if (err) throw err;
         console.log(result);
         res.status(200).json({
-            message: "selected a student",
-            student: result
+            message: "selected student payments",
+            payments: result
+        });
+    });
+
+});
+
+
+router.get('/:studentId/groups', (req, res, next) => {
+
+    const studentId = req.params.studentId;
+
+    const sql = `SELECT *
+                FROM  groupe 
+                WHERE groupId = (SELECT groupId 
+                                    FROM study 
+                                    WHERE studentId ='${studentId}');`;
+
+    mysql.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.status(200).json({
+            message: "selected student groups",
+            groups: result
+        });
+    });
+
+});
+
+router.get('/:studentId/sessions', (req, res, next) => {
+
+    const studentId = req.params.studentId;
+
+    const sql = `SELECT *
+                FROM  session 
+                WHERE groupId = (SELECT groupId 
+                                    FROM study 
+                                    WHERE studentId ='${studentId}');`
+
+    mysql.query(sql, function (err, result) {
+        if (err) throw err;
+        
+        res.status(200).json({
+            message: "selected student sessions",
+            sessions: result
         });
     });
 
