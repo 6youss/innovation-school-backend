@@ -38,12 +38,12 @@ router.get('/:moduleId', (req, res, next) => {
 });
 
 router.post('/' ,upload.single('picture'), (req, res, next) => {
-
+    
     const module = {
         moduleName: req.body.moduleName,
         picture: (req.file) ? req.file.filename : ""
     };
-
+    
     const sql = "INSERT INTO module (moduleName,picture) VALUES ('" +
         module.moduleName + "','"+
         module.picture + "'"
