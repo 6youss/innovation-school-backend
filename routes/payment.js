@@ -10,7 +10,7 @@ const checkPayments = require('../check-payments');
 
 router.get('/', checkPayments,(req, res, next) => {
 
-    const sql = "SELECT * FROM payment ;";
+    const sql = "SELECT * FROM payment;";
 
     mysql.query(sql, function (err, result) {
         if (err) throw err;
@@ -31,10 +31,10 @@ router.get('/:paymentId', (req, res, next) => {
     mysql.query(sql, function (err, result) {
         if (err) next();
         else{
-            const pdfPath = createPdf(result)
+            
             res.status(200).json({
                 message: "selected a payment",
-                payment: {...result,pdfPath}
+                payment: result
             });
         }
         
@@ -42,15 +42,6 @@ router.get('/:paymentId', (req, res, next) => {
 
 });
 
-function createPdf({ paymentId,studentId,groupId,paymentPrice,paymentDate,paymentDone,paymentDoneDate}){
-    const myDoc = new pdf;
-    myDoc.pipe(fs.createWriteStream('./bills/bill.pdf'));
-    myDoc.font('Times-Roman')
-        .fontSize(48)
-        .text('hahaha',300,100);
-    myDoc.end();
-    return "";
-}
 
 router.post('/' , (req, res, next) => {
 

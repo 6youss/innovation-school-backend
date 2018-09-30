@@ -41,19 +41,24 @@ router.get('/:studentId/payments', (req, res, next) => {
 
     const studentId = req.params.studentId;
 
-    const sql =`SELECT paymentId,
-                    studentId,
-                    groupId,
-                    paymentPrice,
-                    DATE_FORMAT(paymentDate,'%Y/%m/%d') as paymentDate,
-                    paymentDone,
-                    paymentDoneDate 
-                FROM payment 
-                WHERE studentId='${studentId}';`;
+    const sql =`SELECT p.paymentId,
+                    p.studentId,
+                    p.groupId,
+                    p.paymentPrice,
+                    DATE_FORMAT(p.paymentDate,'%Y/%m/%d') as paymentDate,
+                    p.paymentDone,
+                    p.paymentDoneDate,
+                    pinfo.sessionCount,
+                    DATE_FORMAT(pinfo.inscriptionDate,'%Y/%m/%d') as inscriptionDate,
+                    moduleName
+                FROM payment as p JOIN payment_info as pinfo 
+                    ON p.studentId=pinfo.studentId AND p.groupId=pinfo.groupId
+                    JOIN groupe as g ON pinfo.groupId=g.groupId
+                    JOIN module as m ON g.moduleId=m.moduleId
+                WHERE p.studentId='${studentId}';`;
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log(result);
+        if (err) next();
         res.status(200).json({
             message: "selected student payments",
             payments: result
@@ -113,11 +118,13 @@ router.post('/',upload.single('picture'), (req, res, next) => {
         picture: (req.file) ? req.file.filename : ""
     };
 
-    const sql = "INSERT INTO student (firstName,lastName,picture) VALUES ('" +
-        student.firstName + "','" +
-        student.lastName + "','" +
-        student.picture + "'"
-        +");";
+    const sql = `INSERT INTO student (firstName,lastName,picture) 
+                VALUES (
+                    CONCAT(UCASE(LEFT('${student.firstName}', 1)), 
+                             LCASE(SUBSTRING('${student.firstName}', 2))),
+                    UPPER('${student.lastName}'),
+                    '${student.picture}'
+                );`;
 
     mysql.query(sql, function (err, result) {
         if (err) throw err;

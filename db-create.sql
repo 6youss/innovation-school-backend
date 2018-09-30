@@ -99,6 +99,7 @@ CREATE TABLE session_present (
     FOREIGN KEY (sessionId) REFERENCES session (sessionId)
 );
 
+
 CREATE TABLE session (
     sessionId integer PRIMARY KEY AUTO_INCREMENT,
     groupId integer,
@@ -199,6 +200,20 @@ FROM
 payment as p JOIN payment_info as pi ON p.studentId = pi.studentId
 GROUP BY p.studentId;
 
+SELECT p.paymentId,
+    p.studentId,
+    p.groupId,
+    p.paymentPrice,
+    DATE_FORMAT(p.paymentDate,'%Y/%m/%d') as paymentDate,
+    p.paymentDone,
+    p.paymentDoneDate,
+    pinfo.sessionCount,
+    DATE_FORMAT(pinfo.inscriptionDate,'%Y/%m/%d') as inscriptionDate,
+    moduleName
+FROM payment as p JOIN payment_info as pinfo 
+    ON p.studentId=pinfo.studentId AND p.groupId=pinfo.groupId
+    JOIN groupe as g ON pinfo.groupId=g.groupId
+    JOIN module as m ON g.moduleId=m.moduleId;
 
 INSERT INTO session 
 (groupId,roomId,sessionDate) 

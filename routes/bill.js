@@ -7,8 +7,17 @@ const checkAuth = require('../check-auth');
 
 
 router.post('/', (req, res, next) => {
-    const payments = req.body.payments;
 
+    const payments = req.body.payments;
+    const sql = `SELECT * FROM student WHERE studentId='${payments[0].studentId}';`;
+    mysql.query(sql,(err,result)=>{
+        if(err) next();
+        createPdf(payments,result[0],res);
+    });
+    
+});
+
+function createPdf(payments,student,res){
     /**HEADER */
     const doc = new pdf({size:'A4'});
     
@@ -22,9 +31,10 @@ router.post('/', (req, res, next) => {
             400,30,{width:200,align:'left',lineGap:4});
 
     doc.font('Times-Roman')
+    .fontSize(15)
+    .text(`${student.firstName} ${student.lastName}`,50,130,{width:200,align:'left',lineGap:5,continued:true})
     .fontSize(10)
-    .text("FirstName LastName\nDate: XX/XX/XXXX\nBill N°: XXXX",
-        50,130,{width:200,align:'left',lineGap:4});
+    .text(`\nDate: ${new Date().toLocaleDateString("fr-FR")}\nFacture N°: XXXX`);
     
     let y=0;
     let total = 0;
@@ -85,8 +95,8 @@ router.post('/', (req, res, next) => {
     .text("Total",width-70,y,{width:50});
     
     doc.font('Times-Roman')
-    .fontSize(10)
-    .text(total+" DA",595-(width-50)/5-50,y+20,{width:(width-50)/5,align:'right'});
+    .fontSize(15)
+    .text(total+" DA",595-(width-50)/5-50,y+23,{width:(width-50)/5,align:'right'});
 
     doc.font('Times-Roman')
     .fontSize(10)
@@ -103,10 +113,6 @@ router.post('/', (req, res, next) => {
     res.status(200).json({
         message:"added file"
     });
-});
-
-function createPdf(res){
-    //{ paymentId,studentId,groupId,paymentPrice,paymentDate,paymentDone,paymentDoneDate}
 }
 
 module.exports = router;
