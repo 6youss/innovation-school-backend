@@ -73,7 +73,7 @@ router.get('/:studentId/groups', (req, res, next) => {
     const studentId = req.params.studentId;
 
     const sql = `SELECT *
-                FROM  groupe 
+                FROM  groupe_info
                 WHERE groupId = (SELECT groupId 
                                     FROM study 
                                     WHERE studentId ='${studentId}');`;
@@ -93,8 +93,19 @@ router.get('/:studentId/sessions', (req, res, next) => {
 
     const studentId = req.params.studentId;
 
-    const sql = `SELECT *
-                FROM  session 
+    const sql = `SELECT sessionId,
+                        groupId,
+                        roomId,
+                        DATE_FORMAT(sessionDate,'%Y/%m/%d') as sessionDate,
+                        sessionDone,
+                        compensationOf,
+                        teacherId,
+                (SELECT m.moduleName
+                    from module as m
+                    WHERE m.moduleId IN (SELECT g.moduleId 
+                                         FROM groupe as g 
+                                         WHERE g.groupId=s.groupId)) as moduleName
+                FROM  session as s
                 WHERE groupId = (SELECT groupId 
                                     FROM study 
                                     WHERE studentId ='${studentId}');`

@@ -189,6 +189,7 @@ WHERE s.sessionDone='1'
 GROUP BY pi.studentId;
 
 
+
 CREATE VIEW session_paid AS
 SELECT p.studentId,
        p.groupId,
@@ -214,6 +215,12 @@ FROM payment as p JOIN payment_info as pinfo
     ON p.studentId=pinfo.studentId AND p.groupId=pinfo.groupId
     JOIN groupe as g ON pinfo.groupId=g.groupId
     JOIN module as m ON g.moduleId=m.moduleId;
+
+SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES
+WHERE table_name = 'bill';
+
+SELECT 'AUTO_INCREMENT' FROM INFORMATION_SCHEMA.TABLES
+                WHERE table_name = 'bill';
 
 INSERT INTO session 
 (groupId,roomId,sessionDate) 
@@ -261,3 +268,19 @@ FROM  groupe
 WHERE groupId = (SELECT groupId 
                      FROM study 
                      WHERE studentId ='1');
+
+
+SELECT sessionId,
+       groupId,
+       roomId,
+       DATE_FORMAT(sessionDate,'%Y/%m/%d') as sessionDate,
+       sessionDone,
+       compensationOf,
+       teacherId,       
+       (SELECT m.moduleName
+                   from module as m
+                   WHERE m.moduleId IN (SELECT g.moduleId from groupe as g where g.groupId=s.groupId)) as moduleName
+FROM  session as s
+WHERE groupId = (SELECT groupId 
+                    FROM study 
+                    WHERE studentId ='1');
