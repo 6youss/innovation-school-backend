@@ -7,31 +7,27 @@ const jwt = require('jsonwebtoken');
 
 router.post('/signup', (req, res, next) => {
 
-    bcrypt.hash(req.body.password, 10, callBack);
-    
     var callBack = (err, hashedPassword) => {
         if (err) {
             return res.status(500).json({
                 error: err
             });
         } else {
-
             const user = {
-                email: req.body.email,
+                userName: req.body.userName,
                 password: hashedPassword,
-                userId: req.body.userId
+                userType: req.body.userType,
+                typeId: req.body.typeId
             };
-
-            const sql = "INSERT INTO user (email,password,userId) VALUES ('" +
-                user.email + "','" +
-                user.password + "','" +
-                user.userId + "'" +
-                ");";
-                
+            const sql = `INSERT INTO user (userName,password,userType,typeId) VALUES 
+                ('${user.userName}',
+                '${user.password}',
+                '${user.userType}',
+                '${user.typeId}');`
             mysql.query(sql, function (err, result) {
-                if (err) throw err;
+                if (err) next();
                 else {
-                    res.status(201).json({
+                    return res.status(201).json({
                         message: "user created",
                         user: user
                     });
@@ -39,36 +35,36 @@ router.post('/signup', (req, res, next) => {
             });
         }
     }
+    bcrypt.hash(req.body.password, 10, callBack);
 });
 
 
 router.post('/signin', (req, res, next) => {
 
-    console.log(req.body);
-    
     const sql = "SELECT * FROM user WHERE " +
-        "email='" + req.body.email + "';";
+        "userName='" + req.body.userName + "';";
 
     mysql.query(sql, function (err, user) {
         if (err) throw err;
         else {
             if (user.length < 1) {
                 res.status(401).json({
-                    message: "Auth Failed",
+                    error: "Auth Failed",
                 });
             } else {
                 bcrypt.compare(req.body.password, user[0].password, (err, result) => {
                     if (err) {
                         return res.status(401).json({
-                            message: "Auth Failed",
+                            error: "Auth Failed",
                         });
                     }
                     if (result) {
                         const token = jwt.sign({
-                                email: user[0].email,
-                                userId: user[0].userId
+                                userName: user[0].userName,
+                                userType: user[0].userType,
+                                typeId: user[0].typeId,
                             },
-                            "JWTPASSWORD", {
+                            "JWTPASSWORD@262qsddsqds", {
                                 expiresIn: "1h"
                             }
                         );
@@ -79,7 +75,7 @@ router.post('/signin', (req, res, next) => {
                         });
                     }
                     res.status(401).json({
-                        message: "Auth Failed",
+                        error: "Auth Failed",
                     });
                 });
             }

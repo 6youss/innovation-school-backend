@@ -13,7 +13,9 @@ router.post('/', (req, res, next) => {
     const validated = req.body.validated;
 
     if(validated === true){
-        // console.log("validated !");
+        res.status(200).json({
+            message:"bill validated"
+        });
         // tempDoc.pipe(fs.createWriteStream('./bills/bill.pdf'));
         // tempDoc.end();
         // res.status(200).json({

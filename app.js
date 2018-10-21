@@ -14,7 +14,6 @@ const billRoutes = require('./routes/bill');
 
 const checkPayments = require('./check-payments');
 
-
 app.use(bodyParser.urlencoded({
     extended: false
 }));
@@ -57,7 +56,7 @@ app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
         error: {
-            message: error.message
+            error: error.message
         }
     });
 });

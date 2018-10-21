@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
                 ON g.teacherId = t.teacherId;`
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         res.status(200).json({
             message: "selected all groups",
             groups: result
@@ -52,7 +52,7 @@ router.get('/:groupId', (req, res, next) => {
                 WHERE g.groupId='${groupId}';`;
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         res.status(200).json({
             message: "selected a group",
             group: result
@@ -76,7 +76,7 @@ router.post('/' , (req, res, next) => {
         +");";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         else{
             res.status(201).json({
                 message: "group added",
@@ -102,7 +102,7 @@ router.put('/', (req, res, next) => {
         "' WHERE groupId ='" + group.groupId + "';";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         res.status(203).json({
             message: "group updated",
             group: group
@@ -117,7 +117,7 @@ router.delete('/:groupId', (req, res, next) => {
                 groupId = '" + req.params.groupId +"';";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         else
         res.status(203).json({
             message: "group deleted"
@@ -142,7 +142,7 @@ router.get('/:groupId/students', (req, res, next) => {
                                     WHERE groupId='${groupId}'
                                     );`
     mysql.query(sql+sql2, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         
         res.status(200).json({
             message: "selected students of group "+groupId,
@@ -167,7 +167,7 @@ router.get('/:groupId/sessions', (req, res, next) => {
                 WHERE groupId = '${groupId}';`
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         res.status(200).json({
             message: "selected sessions of group "+groupId,
             sessions: result
@@ -189,7 +189,7 @@ router.post('/:groupId/:studentId' , (req, res, next) => {
         +");";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         else{
             res.status(201).json({
                 message: "added student to group",
@@ -205,7 +205,7 @@ router.delete('/:groupId/:studentId', (req, res, next) => {
                 groupId = '" + req.params.groupId +"' AND studentId = '" + req.params.studentId +"';";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next();
         else
         res.status(203).json({
             message: "student deleted from group"

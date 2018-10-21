@@ -125,6 +125,15 @@ CREATE TABLE user (
     password varchar(500)
 );
 
+desc user;
+select * from user;
+ALTER TABLE user ADD userType INTEGER;
+ALTER TABLE user ADD typeId INTEGER;
+ALTER TABLE user CHANGE `userName` `userName` varchar(16) AUTO_INCREMENT;
+ALTER TABLE user MODIFY userName varchar(16) AUTO_INCREMENT;
+truncate user;
+ALTER TABLE user DROP COLUMN userId;
+
 CREATE TABLE bill(
     billId integer PRIMARY KEY AUTO_INCREMENT,
     studentId integer,
@@ -284,3 +293,26 @@ FROM  session as s
 WHERE groupId = (SELECT groupId 
                     FROM study 
                     WHERE studentId ='1');
+
+
+CREATE VIEW groupe_info AS
+SELECT g.groupId,
+    g.level,
+    g.teacherId,
+    t.firstName,
+    t.lastName,
+    t.picture as teacherPicture,
+    m.moduleId,
+    m.moduleName,
+    m.picture as modulePicture
+FROM groupe AS g
+JOIN module AS m
+ON g.moduleId=m.moduleId
+JOIN teacher AS t
+ON g.teacherId = t.teacherId;
+
+
+/*
+    faire l'autentification ,
+    ajouter une forme pour l'ajout des paiements
+*/

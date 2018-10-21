@@ -74,7 +74,7 @@ router.get('/:studentId/groups', (req, res, next) => {
 
     const sql = `SELECT *
                 FROM  groupe_info
-                WHERE groupId = (SELECT groupId 
+                WHERE groupId IN (SELECT groupId 
                                     FROM study 
                                     WHERE studentId ='${studentId}');`;
 
@@ -106,12 +106,15 @@ router.get('/:studentId/sessions', (req, res, next) => {
                                          FROM groupe as g 
                                          WHERE g.groupId=s.groupId)) as moduleName
                 FROM  session as s
-                WHERE groupId = (SELECT groupId 
+                WHERE groupId IN (SELECT groupId 
                                     FROM study 
                                     WHERE studentId ='${studentId}');`
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) {
+            console.log(err);
+            next();
+        }
         
         res.status(200).json({
             message: "selected student sessions",
