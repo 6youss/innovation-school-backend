@@ -38,6 +38,25 @@ router.get('/:teacherId', (req, res, next) => {
 
 });
 
+router.get('/:teacherId/sessions', (req, res, next) => {
+
+    const teacherId = req.params.teacherId;
+
+    const sql =`SELECT *
+                FROM session
+                WHERE teacherId='${teacherId}'
+                ORDER BY groupId,sessionDate DESC;`;
+
+    mysql.query(sql, function (err, result) {
+        if (err) next();
+        res.status(200).json({
+            message: "selected teacher sessions",
+            sessions: result
+        });
+    });
+
+});
+
 router.post('/', upload.single('teacherPic'), (req, res, next) => {
 
     const teacher = {

@@ -120,19 +120,12 @@ CREATE TABLE room (
 );
 
 CREATE TABLE user (
-    email varchar(256) PRIMARY KEY,
-    userId integer UNIQUE,
-    password varchar(500)
+    userName varchar(16) PRIMARY KEY,
+    password varchar(500),
+    userType INTEGER,
+    typeId INTEGER
 );
 
-desc user;
-select * from user;
-ALTER TABLE user ADD userType INTEGER;
-ALTER TABLE user ADD typeId INTEGER;
-ALTER TABLE user CHANGE `userName` `userName` varchar(16) AUTO_INCREMENT;
-ALTER TABLE user MODIFY userName varchar(16) AUTO_INCREMENT;
-truncate user;
-ALTER TABLE user DROP COLUMN userId;
 
 CREATE TABLE bill(
     billId integer PRIMARY KEY AUTO_INCREMENT,
@@ -257,7 +250,7 @@ truncate study;
 truncate payment_info;
 truncate payment;
 
-select * from session;
+select * from session ORDER BY groupId,sessionDate DESC;
 delete from session where sessionId='';
 
 

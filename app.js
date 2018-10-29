@@ -30,8 +30,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
 app.use('/student', studentRoutes);
 app.use('/teacher', teacherRoutes);
 app.use('/group', groupRoutes);
