@@ -1,3 +1,23 @@
+
+SET FOREIGN_KEY_CHECKS = 0;
+truncate student;
+truncate teacher;
+truncate groupe;
+truncate groupe_info;
+truncate user;
+truncate room;
+truncate payment;
+truncate module;
+truncate study;
+truncate teach;
+truncate reported_session;
+truncate session;
+truncate session_present;
+truncate session_absent;
+truncate payment_info;
+truncate pay;
+truncate bill;
+DROP table student;
 CREATE TABLE student (
     studentId integer PRIMARY KEY AUTO_INCREMENT,
     firstName varchar(40),
@@ -8,18 +28,9 @@ CREATE TABLE student (
     adress varchar(500),
     phone integer,
     parentPhone integer,
-    inscriptionDate DATE DEFAULT CURDATE()
-                ON UPDATE CURDATE()
+    inscriptionDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE study (
-    groupId integer,
-    studentId integer,
-    PRIMARY KEY (studentId, groupId),
-    FOREIGN KEY (groupId) REFERENCES groupe(groupId),
-    FOREIGN KEY (studentId) REFERENCES student(studentId)
-);
-
+DROP TABLE teacher;
 CREATE TABLE teacher (
     teacherId integer PRIMARY KEY AUTO_INCREMENT,
     firstName varchar(40),
@@ -29,9 +40,19 @@ CREATE TABLE teacher (
     birthday DATE,
     adress varchar(500),
     phone integer,
-    inscriptionDate DATE DEFAULT CURDATE()
-                ON UPDATE CURDATE()
+    inscriptionDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+CREATE TABLE study (
+    groupId integer,
+    studentId integer,
+    PRIMARY KEY (studentId, groupId),
+    FOREIGN KEY (groupId) REFERENCES groupe(groupId),
+    FOREIGN KEY (studentId) REFERENCES student(studentId)
+);
+
 
 CREATE TABLE teach (
     sessionId integer,
