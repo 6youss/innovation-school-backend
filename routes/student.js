@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
     const sql = "SELECT * FROM student ;";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next(err);
         res.status(200).json({
             message: "selected all students",
             students: result
@@ -79,8 +79,8 @@ router.get('/:studentId/groups', (req, res, next) => {
                                     WHERE studentId ='${studentId}');`;
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log(result);
+        if (err) next(err);
+        
         res.status(200).json({
             message: "selected student groups",
             groups: result
@@ -112,7 +112,7 @@ router.get('/:studentId/sessions', (req, res, next) => {
 
     mysql.query(sql, function (err, result) {
         if (err) {
-            console.log(err);
+            
             next();
         }
         
@@ -129,19 +129,27 @@ router.post('/',upload.single('picture'), (req, res, next) => {
     const student = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        picture: (req.file) ? req.file.filename : ""
+        picture: (req.file) ? req.file.filename : "",
+        birthday: (req.body.birthday) ? req.body.birthday : "0",
+        adress: (req.body.adress) ? req.body.adress : "",
+        phone: (req.body.phone) ? req.body.phone : 0,
+        parentPhone: (req.body.parentPhone) ? req.body.parentPhone : 0,
     };
-
-    const sql = `INSERT INTO student (firstName,lastName,picture) 
+    
+    const sql = `INSERT INTO student 
+                (firstName,lastName,picture,birthday,adress,phone,parentPhone) 
                 VALUES (
-                    CONCAT(UCASE(LEFT('${student.firstName}', 1)), 
-                             LCASE(SUBSTRING('${student.firstName}', 2))),
+                    CONCAT( UCASE(LEFT('${student.firstName}', 1)),LCASE(SUBSTRING('${student.firstName}',2))),
                     UPPER('${student.lastName}'),
-                    '${student.picture}'
+                    '${student.picture}',
+                    STR_TO_DATE('${student.birthday}','%d/%m/%Y'),
+                    '${student.adress}',
+                    '${student.phone}',
+                    '${student.parentPhone}'
                 );`;
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next(err);
         else{
             res.status(201).json({
                 message: "student added",
@@ -149,7 +157,6 @@ router.post('/',upload.single('picture'), (req, res, next) => {
             });
         }
     });
-
 
 });
 
@@ -162,8 +169,6 @@ router.put('/:studentId', (req, res, next) => {
         picture: req.body.picture
     };
 
-    console.log(req.body);
-
     const sql = "UPDATE student SET "+
         "firstName = '" + student.firstName +
         "',lastName ='" + student.lastName +
@@ -171,10 +176,8 @@ router.put('/:studentId', (req, res, next) => {
         "' WHERE studentId ='" + student.studentId + 
         "';";
 
-    console.log(sql);
-    
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next(err);
         
         res.status(203).json({
             message: "student updated",
@@ -190,7 +193,7 @@ router.delete('/:studentId', (req, res, next) => {
                 studentId = '" + req.params.studentId +"';";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next(err);
         else
         res.status(203).json({
             message: "student deleted"

@@ -62,7 +62,7 @@ router.post('/', upload.single('teacherPic'), (req, res, next) => {
     const teacher = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        picture: (req.file) ? req.file.path : ""
+        picture: (req.file) ? req.file.filename : ""
     };
 
     const sql = "INSERT INTO teacher (firstName,lastName,picture) VALUES ('" +
