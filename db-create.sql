@@ -44,7 +44,6 @@ CREATE TABLE teacher (
 );
 SET FOREIGN_KEY_CHECKS = 1;
 
-
 CREATE TABLE study (
     groupId integer,
     studentId integer,

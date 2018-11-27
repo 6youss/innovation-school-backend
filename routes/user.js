@@ -45,7 +45,7 @@ router.post('/signin', (req, res, next) => {
         "userName='" + req.body.userName + "';";
 
     mysql.query(sql, function (err, user) {
-        if (err) throw err;
+        if (err) next;
         else {
             if (user.length < 1) {
                 res.status(401).json({

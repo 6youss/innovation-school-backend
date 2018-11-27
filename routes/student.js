@@ -142,12 +142,12 @@ router.post('/',upload.single('picture'), (req, res, next) => {
                     CONCAT( UCASE(LEFT('${student.firstName}', 1)),LCASE(SUBSTRING('${student.firstName}',2))),
                     UPPER('${student.lastName}'),
                     '${student.picture}',
-                    STR_TO_DATE('${student.birthday}','%d/%m/%Y'),
+                    '${student.birthday}',
                     '${student.adress}',
                     '${student.phone}',
                     '${student.parentPhone}'
                 );`;
-
+    //STR_TO_DATE('${student.birthday}','%d/%m/%Y'),
     mysql.query(sql, function (err, result) {
         if (err) next(err);
         else{
