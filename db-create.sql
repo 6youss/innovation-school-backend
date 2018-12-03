@@ -94,7 +94,7 @@ CREATE TABLE groupe (
     FOREIGN KEY (moduleId) REFERENCES module (moduleId),
     FOREIGN KEY (teacherId) REFERENCES teacher (teacherId)
 );
-
+select * from groupe;
 CREATE TABLE module (
     moduleId integer PRIMARY KEY AUTO_INCREMENT,
     moduleName varchar(40)

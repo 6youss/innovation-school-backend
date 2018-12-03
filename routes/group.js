@@ -76,7 +76,7 @@ router.post('/' , (req, res, next) => {
         +");";
 
     mysql.query(sql, function (err, result) {
-        if (err) next();
+        if (err) next(err);
         else{
             res.status(201).json({
                 message: "group added",
@@ -158,12 +158,19 @@ router.get('/:groupId/sessions', (req, res, next) => {
 
     const groupId = req.params.groupId;
     
-    const sql = `SELECT 
-                    sessionId,
-                    roomId,
-                    DATE_FORMAT(sessionDate ,'%W %d/%b/%Y %H:%i') as sessionDate,
-                    sessionDone 
-                FROM session
+    const sql = `SELECT sessionId,
+                        groupId,
+                        roomId,
+                        DATE_FORMAT(sessionDate,'%Y/%m/%d') as sessionDate,
+                        sessionDone,
+                        compensationOf,
+                        teacherId,
+                (SELECT m.moduleName
+                    from module as m
+                    WHERE m.moduleId IN (SELECT g.moduleId 
+                                         FROM groupe as g 
+                                         WHERE g.groupId=s.groupId)) as moduleName
+                FROM  session as s
                 WHERE groupId = '${groupId}';`
 
     mysql.query(sql, function (err, result) {
