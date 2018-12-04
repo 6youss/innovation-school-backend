@@ -62,14 +62,22 @@ router.post('/', upload.single('teacherPic'), (req, res, next) => {
     const teacher = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        picture: (req.file) ? req.file.filename : ""
+        picture: (req.file) ? req.file.filename : "",
+        birthday: (req.body.birthday) ? req.body.birthday : "0",
+        adress: (req.body.adress) ? req.body.adress : "",
+        phone: (req.body.phone) ? req.body.phone : 0,
     };
 
-    const sql = "INSERT INTO teacher (firstName,lastName,picture) VALUES ('" +
-        teacher.firstName + "','" +
-        teacher.lastName + "','" +
-        teacher.picture + "'"
-        +");";
+    const sql = `INSERT INTO teacher 
+                (firstName,lastName,picture,birthday,adress,phone) 
+                VALUES (
+                    CONCAT( UCASE(LEFT('${teacher.firstName}', 1)),LCASE(SUBSTRING('${teacher.firstName}',2))),
+                    UPPER('${teacher.lastName}'),
+                    '${teacher.picture}',
+                    '${teacher.birthday}',
+                    '${teacher.adress}',
+                    '${teacher.phone}'
+                );`;
 
     mysql.query(sql, function (err, result) {
         if (err) throw err;
