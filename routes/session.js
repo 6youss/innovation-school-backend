@@ -94,14 +94,35 @@ router.post('/' , (req, res, next) => {
     const session = {
         groupId: req.body.groupId,
         roomId: req.body.roomId,
-        sessionDate: req.body.sessionDate
+        sessionDate: req.body.sessionDate,
+        teacherId: req.body.teacherId
     };
+    
+    if(!session.teacherId){
+        mysql.query(`SELECT teacherId
+                    FROM groupe
+                    WHERE groupId = '${session.groupId}';`, 
+        function (err, result) {
+            if (err) next(err);
+            else{
+                session.teacherId = result[0].teacherId;
+                insertSession(session,res);
+            }
+        });
+    }else{
+        insertSession(session,res);
+    }
 
-    const sql = "INSERT INTO session (groupId,roomId,sessionDate) VALUES ('" +
-        session.groupId + "','" +
-        session.roomId + "','" +
-        session.sessionDate + "'"
-        +");";
+    
+});
+
+function insertSession(session,res){
+    const sql = `INSERT INTO session (groupId,roomId,sessionDate,teacherId) VALUES (
+        '${session.groupId}',
+        '${session.roomId}',
+        '${session.sessionDate}',
+        '${session.teacherId}'
+        );`;
 
     mysql.query(sql, function (err, result) {
         if (err) throw err;
@@ -112,11 +133,9 @@ router.post('/' , (req, res, next) => {
             });
         }
     });
-});
-
+}
 
 router.put('/', (req, res, next) => {
-
     const session = {
         sessionId: req.body.sessionId,
         groupId: req.body.groupId,
