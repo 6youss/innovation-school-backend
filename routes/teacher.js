@@ -8,9 +8,7 @@ const upload = require('../upload');
 
 
 router.get('/', (req, res, next) => {
-
     const sql = "SELECT * FROM teacher ;";
-
     mysql.query(sql, function (err, result) {
         if (err) throw err;
         res.status(200).json({
@@ -18,7 +16,6 @@ router.get('/', (req, res, next) => {
             teachers: result
         });
     });
-
 });
 
 router.get('/:teacherId', (req, res, next) => {
@@ -120,10 +117,10 @@ router.delete('/:teacherId', (req, res, next) => {
                 teacherId = '" + req.params.teacherId +"';";
 
     mysql.query(sql, function (err, result) {
-        if (err) throw err;
+        if (err) next(err);
         else
         res.status(203).json({
-            message: "Teacher deleted"
+            message: "teacher deleted"
         });
     });
 
