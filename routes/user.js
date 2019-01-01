@@ -3,7 +3,7 @@ const router = express.Router();
 const mysql = require('../mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const checkAuth = require('../check-auth');
 
 router.post('/signup', (req, res, next) => {
 
@@ -82,6 +82,13 @@ router.post('/signin', (req, res, next) => {
         }
     });
 
+});
+
+router.post('/token',checkAuth, (req, res, next) => {
+    
+    return res.status(200).json({
+        message: "User signed in"
+    })
 });
 
 module.exports = router;

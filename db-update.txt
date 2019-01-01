@@ -1,4 +1,4 @@
-/* SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE student;
 DROP TABLE teacher;
 DROP TABLE groupe;
@@ -156,4 +156,4 @@ CREATE TABLE pay (
     PRIMARY KEY (billId, paymentId),
     FOREIGN KEY (billId) REFERENCES bill(billId) ON DELETE CASCADE,
     FOREIGN KEY (paymentId) REFERENCES payment(paymentId) ON DELETE CASCADE
-); */
+);

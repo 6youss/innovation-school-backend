@@ -24,7 +24,6 @@ router.get('/', (req, res, next) => {
 router.get('/:studentId', (req, res, next) => {
 
     const studentId = req.params.studentId;
-
     const sql = `SELECT *,
                  DATE_FORMAT(birthday,'%Y/%m/%d') as birthday,
                  DATE_FORMAT(inscriptionDate,'%Y/%m/%d') as inscriptionDate
