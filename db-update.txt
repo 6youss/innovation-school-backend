@@ -24,8 +24,8 @@ CREATE TABLE student (
     picture varchar(500),
     birthday DATE,
     adress varchar(500),
-    phone integer,
-    parentPhone integer,
+    phone varchar(16),
+    parentPhone varchar(16),
     inscriptionDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE teacher (
     picture varchar(500),
     birthday DATE,
     adress varchar(500),
-    phone integer,
+    phone varchar(16),
     inscriptionDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -157,93 +157,3 @@ CREATE TABLE pay (
     FOREIGN KEY (billId) REFERENCES bill(billId) ON DELETE CASCADE,
     FOREIGN KEY (paymentId) REFERENCES payment(paymentId) ON DELETE CASCADE
 );
-
-
-CREATE VIEW session_number AS
-SELECT  pi.studentId,
-        pi.groupId,
-        pi.sessionCount,
-        pi.paymentPrice,
-        count(s.sessionId) as sessionsDoneCount,
-        DATE(pi.inscriptionDate) as inscriptionDate
-FROM
-student as p JOIN payment_info as pi ON p.studentId=pi.studentId
-JOIN session as s ON pi.groupId=s.groupId
-WHERE s.sessionDone='1'
-GROUP BY pi.studentId;
-
-CREATE VIEW session_paid AS
-SELECT p.studentId,
-       p.groupId,
-       SUM(p.paymentPrice) as totalPaid,
-       SUM(p.paymentPrice) DIV pi.paymentPrice as sessionsPaidCount,
-       MAX(DATE(p.paymentDate)) as paymentDate,
-       DATEDIFF(CURRENT_TIMESTAMP,MAX(p.paymentDate)) as dayDiff
-FROM
-payment as p JOIN payment_info as pi ON p.studentId = pi.studentId
-GROUP BY p.studentId;
-
-CREATE VIEW groupe_info AS
-SELECT g.groupId,
-    g.level,
-    g.teacherId,
-    t.firstName,
-    t.lastName,
-    t.picture as teacherPicture,
-    m.moduleId,
-    m.moduleName,
-    m.picture as modulePicture
-FROM groupe AS g
-JOIN module AS m
-ON g.moduleId=m.moduleId
-JOIN teacher AS t
-ON g.teacherId = t.teacherId;
-
-
-
-SELECT `auto_increment` FROM INFORMATION_SCHEMA.TABLES
-WHERE table_name = 'bill';
-
-SELECT 'AUTO_INCREMENT' FROM INFORMATION_SCHEMA.TABLES
-                WHERE table_name = 'bill';
-
-SELECT DATE_FORMAT(sessionDate ,'%W %d/%b/%Y')
-
-
--- CREATE TRIGGER pay_del BEFORE DELETE ON payment
--- FOR EACH ROW 
--- BEGIN
---     DELETE FROM pay WHERE paymentId = OLD.paymentId;
--- END;
-
--- //deleting bill
--- CREATE TRIGGER bill_del BEFORE DELETE ON bill
--- FOR EACH ROW 
--- BEGIN
---     DELETE FROM pay WHERE billId = OLD.billId;
--- END;
-
--- //delete student from group
--- CREATE TRIGGER study_del BEFORE DELETE ON study
--- FOR EACH ROW 
--- BEGIN
---     DELETE FROM payment_info WHERE studentId = OLD.studentId;
--- END;
-
--- //deleting student
--- CREATE TRIGGER stu_del BEFORE DELETE ON student
--- FOR EACH ROW 
--- BEGIN
---     DELETE FROM bill WHERE studentId = OLD.studentId;
---     DELETE FROM payment WHERE studentId = OLD.studentId;
---     DELETE FROM study WHERE studentId=OLD.studentId;
--- END;
-
-select COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME
-from information_schema.KEY_COLUMN_USAGE
-where TABLE_NAME = 'bill';
-
-/*
-    faire l'autentification ,
-    ajouter une forme pour l'ajout des paiements
-*/

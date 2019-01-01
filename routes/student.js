@@ -4,6 +4,7 @@ const mysql = require('../mysql');
 const checkAuth = require('../check-auth');
 const upload = require('../upload');
 const checkPayments = require('../check-payments');
+const fs = require('fs');
 
 router.get('/', (req, res, next) => {
 
@@ -24,8 +25,10 @@ router.get('/:studentId', (req, res, next) => {
 
     const studentId = req.params.studentId;
 
-    const sql = "SELECT * FROM student WHERE studentId='" + studentId + "';";
-    
+    const sql = `SELECT *,DATE_FORMAT(birthday,'%Y/%m/%d') as birthday 
+                FROM student
+                WHERE studentId='${studentId}';`;
+
     mysql.query(sql, function (err, result) {
         if (err) next();
         else
@@ -160,44 +163,80 @@ router.post('/',upload.single('picture'), (req, res, next) => {
 
 });
 
-router.put('/:studentId', (req, res, next) => {
+router.put('/:studentId',upload.single('picture'), (req, res, next) => {
 
     const student = {
         studentId: req.params.studentId,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        picture: req.body.picture
+        picture: (req.file) ? req.file.filename : req.body.picture,
+        birthday: (req.body.birthday) ? req.body.birthday : "0",
+        adress: (req.body.adress) ? req.body.adress : "",
+        phone: (req.body.phone) ? req.body.phone : 0,
+        parentPhone: (req.body.parentPhone) ? req.body.parentPhone : 0,
     };
 
-    const sql = "UPDATE student SET "+
-        "firstName = '" + student.firstName +
-        "',lastName ='" + student.lastName +
-        "',picture ='" + student.picture +
-        "' WHERE studentId ='" + student.studentId + 
-        "';";
+    const sql = `UPDATE student SET
+        firstName = '${student.firstName}',
+        lastName ='${student.lastName}',
+        picture ='${student.picture}',
+        birthday ='${student.birthday}',
+        adress ='${student.adress}',
+        phone ='${student.phone}',
+        parentPhone ='${student.parentPhone}'
+        WHERE studentId ='${student.studentId}';`;
 
     mysql.query(sql, function (err, result) {
         if (err) next(err);
+        else{
+            res.status(203).json({
+                message: "student updated",
+                student: student
+            });
+            if(req.file && req.body.picture){
+                fs.unlink('./uploads/'+req.body.picture, (err) => {
+                    if (err) next(err);
+                    console.log('successfully updated'+req.body.picture);
+                });
+            }
+        }
         
-        res.status(203).json({
-            message: "student updated",
-            student: student
-        });
     });
 
 });
 
 router.delete('/:studentId', (req, res, next) => {
 
-    const sql = "DELETE FROM student WHERE \
-                studentId = '" + req.params.studentId +"';";
+    const studentId=req.params.studentId;
+
+    const sql = `SELECT picture 
+                FROM student 
+                WHERE studentId='${studentId}';
+
+                DELETE FROM student 
+                WHERE studentId='${studentId}';`;
 
     mysql.query(sql, function (err, result) {
         if (err) next(err);
-        else
-        res.status(203).json({
-            message: "student deleted"
-        });
+        else{
+            if(result[0].length === 0) {
+                next({message:"student doesn't exist"});
+                return;
+            }
+                
+            res.status(203).json({
+                message: "student deleted"
+            });
+            
+            //delete file picture
+            const picture = result[0][0].picture;
+            if(picture)
+                fs.unlink('./uploads/'+picture, (err) => {
+                    if (err) throw err;
+                    console.log('successfully deleted '+picture);
+                });
+        }
+        
     });
 
 });
