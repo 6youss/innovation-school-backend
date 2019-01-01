@@ -1,6 +1,6 @@
 var mysql = require('mysql');
 const fs = require('fs');
-const update=true;
+const update=false;
 
 var con = mysql.createConnection({
     host: "localhost",
