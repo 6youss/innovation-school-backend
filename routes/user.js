@@ -64,7 +64,7 @@ router.post('/signin', (req, res, next) => {
                                 userType: user[0].userType,
                                 typeId: user[0].typeId,
                             },
-                            "JWTPASSWORD@262qsddsqds", {
+                            process.env.TOKEN_PASSWORD, {
                                 expiresIn: "1h"
                             }
                         );

@@ -5,8 +5,8 @@ const update=false;
 var con = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Moonswing15",
-    database: "innovation_school",
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     multipleStatements: true
 });
 
